@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-
-
 from janome.analyzer import Analyzer
 from janome.charfilter import UnicodeNormalizeCharFilter, RegexReplaceCharFilter
 from janome.tokenizer import Tokenizer as JanomeTokenizer  # sumyのTokenizerと名前が被るため

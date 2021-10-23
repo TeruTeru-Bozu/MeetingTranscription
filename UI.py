@@ -5,7 +5,10 @@ import tkinter.filedialog as dlg
 from PIL import Image, ImageTk
 
 def pressed(event):
+    global  is_Transcription
+    is_Transcription = False
     print("クリックされました")
+    
 
 def draw_window():
 
