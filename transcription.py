@@ -24,6 +24,10 @@ from google.cloud import speech
 import pyaudio
 from six.moves import queue
 
+import threading
+sys.path.append('../')
+import UI
+
 # Audio recording parameters
 RATE = 16000
 CHUNK = int(RATE / 10)  # 100ms
@@ -110,6 +114,7 @@ def listen_print_loop(responses):
     final one, print a newline to preserve the finalized transcription.
     """
     num_chars_printed = 0
+    now_line = 1
     for response in responses:
         if not response.results:
             continue
@@ -132,13 +137,19 @@ def listen_print_loop(responses):
         overwrite_chars = " " * (num_chars_printed - len(transcript))
 
         if not result.is_final:
-            # sys.stdout.write(transcript + overwrite_chars + "\r")
-            # sys.stdout.flush()
 
+            UI.realtime.delete('1.0', 'end')
+            UI.realtime.insert('' + str(now_line) + '.0', transcript + overwrite_chars + "\r")
+            sys.stdout.write(transcript + overwrite_chars + "\r")
+            sys.stdout.flush()
             num_chars_printed = len(transcript)
 
         else:
+            ##決まった文字列の表示##
             print(transcript + overwrite_chars)
+            UI.textfield.insert('' + str(now_line) + '.0', transcript + overwrite_chars + '\n')
+
+            now_line += 1
 
             # Exit recognition if any of the transcribed phrases could be
             # one of our keywords.
@@ -179,6 +190,10 @@ def main():
 
 
 if __name__ == "__main__":
+
+    thread1 = threading.Thread(target=UI.draw_window)
+    thread1.start()
+
     main()
 # [END speech_transcribe_streaming_mic]
 
