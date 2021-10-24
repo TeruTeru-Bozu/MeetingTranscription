@@ -15,7 +15,7 @@ def draw_window():
     global root, textfield, realtime
     #Windowの生成
     root = tk.Tk()
-    root.title("Software Title")
+    root.title("MeetingTranscription")
     root.geometry("480x560")
 
     #テキストボックス（複数行、スクロールバー付）の生成
