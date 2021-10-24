@@ -39,8 +39,9 @@ RATE = 16000
 CHUNK = int(RATE / 10)  # 100ms
 
 def SaveResult():
-    all_text = UI.textfield.get('1.0', 'end')
-    all_summary = UI.summary.get('1.0', 'end')
+    print("とんでう")
+    all_text = UI.textfield.get("1.0", "end-1c")
+    all_summary = UI.summary.get("1.0", "end-1c")
     savefile.savefile(all_text)
     savefile.savefile(all_summary)
     print("終了します")
@@ -153,6 +154,10 @@ def listen_print_loop(responses):
 
         if not result.is_final:
 
+            #終了ボタンが押されたら、やめる
+            if(UI.is_Transcription is False):
+                return
+
             UI.realtime.delete('1.0', 'end')
             UI.realtime.insert('' + str(now_line) + '.0', transcript + overwrite_chars + "\r")
             sys.stdout.write(transcript + overwrite_chars + "\r")
@@ -160,6 +165,9 @@ def listen_print_loop(responses):
             num_chars_printed = len(transcript)
 
         else:
+            #終了ボタンが押されたら、やめる
+            if(UI.is_Transcription is False):
+                return
             ##決まった文字列の表示##
             UI.realtime.delete('1.0', 'end')
             all_sentence += transcript + overwrite_chars + '。\n'
@@ -176,7 +184,7 @@ def listen_print_loop(responses):
             # one of our keywords.
             if re.search(r"\b(exit|quit)\b", transcript, re.I):
                 print("Exiting..")
-                return
+                break
 
             num_chars_printed = 0
     
