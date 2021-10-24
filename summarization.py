@@ -97,8 +97,9 @@ def main(text):
   algorithm = "sum"
   language = "japanese"
   sum_sentences = summarize_sentences(text, algorithm=algorithm, language=language)
-  print(sum_sentences.replace('。', '。\n'))
+  #print(sum_sentences.replace('。', '。\n'))
   #UIUX.summary.insert(sum_sentences.replace('。', '。\n'))
+  return sum_sentences.replace('。', '。\n')
   
 
 if __name__ == "__main__":

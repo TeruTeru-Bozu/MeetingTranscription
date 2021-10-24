@@ -6,6 +6,7 @@ from PIL import Image, ImageTk
 import sys
 sys.path.append('../')
 import transcription
+import summarization
 
 def EndButtonPressed(event):
     global  is_Transcription
@@ -14,7 +15,7 @@ def EndButtonPressed(event):
 
 def draw_window():
 
-    global root, textfield, realtime
+    global root, textfield, realtime, summary
     #Windowの生成
     root = tk.Tk()
     root.title("MeetingTranscription")
@@ -52,6 +53,5 @@ def draw_window():
     tkimg = ImageTk.PhotoImage(endbutton)
     canvas.create_image(64, 64, image=tkimg, tags="endbutton")
     canvas.tag_bind("endbutton", "<ButtonPress-1>", EndButtonPressed)
-
 
     root.mainloop()

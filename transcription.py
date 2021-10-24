@@ -147,40 +147,40 @@ def listen_print_loop(responses):
             sys.stdout.flush()
             num_chars_printed = len(transcript)
 
+            #終了ボタンが押されたら、やめる
+            if(UI.is_Transcription is False):
+                return
+
         else:
             ##決まった文字列の表示##
             UI.realtime.delete('1.0', 'end')
-            print(transcript + overwrite_chars)
-            UI.textfield.insert('' + str(now_line) + '.0', transcript + overwrite_chars + '\n')
-            all_sentence += transcript + overwrite_chars + '。'
+            all_sentence += transcript + overwrite_chars + '。\n'
+            #print(transcript + overwrite_chars)
+            UI.textfield.delete('1.0', 'end')
+            UI.textfield.insert('1.0', all_sentence)
 
+            UI.summary.delete('1.0', 'end')
+            UI.summary.insert('1.0', summarization.main(all_sentence))
 
             now_line += 1
+
+            #終了ボタンが押されたら、やめる
+            if(UI.is_Transcription is False):
+                return
+
 
             # Exit recognition if any of the transcribed phrases could be
             # one of our keywords.
             if re.search(r"\b(exit|quit)\b", transcript, re.I):
                 print("Exiting..")
-                break
+                return
 
             num_chars_printed = 0
-
-        #終了ボタンが押されたら、やめる
-        if(UI.is_Transcription is False):
-            if(UI.realtime.get('1.0', 'end') != ""):
-                UI.textfield.insert('' + str(now_line) + '.0', transcript + overwrite_chars + '\n')
-                all_sentence += transcript + overwrite_chars + '。'
-                now_line += 1
-
-            print("要約をします")
-            summarization.main(all_sentence)
-            print("要約がようやく終わったよ")
-            UI.is_Transcription = True
-            break
-    return all_sentence
-
+            #終了ボタンが押されたら、やめる
+            if(UI.is_Transcription is False):
+                return
+    
 def main():
-    all_sentence = ""
     # See http://g.co/cloud/speech/docs/languages
     # for a list of supported languages.
     language_code = "ja-JP"  # a BCP-47 language tag
@@ -206,9 +206,8 @@ def main():
         responses = client.streaming_recognize(streaming_config, requests)
 
         # Now, put the transcription responses to use.
-        all_sentence = listen_print_loop(responses)
-
-
+        listen_print_loop(responses)
+        print("終了")
 
 if __name__ == "__main__":
 
