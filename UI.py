@@ -3,11 +3,13 @@ import tkinter as tk
 import tkinter.scrolledtext as st
 import tkinter.filedialog as dlg
 from PIL import Image, ImageTk
+import sys
+sys.path.append('../')
+import transcription
 
-def pressed(event):
+def EndButtonPressed(event):
     global  is_Transcription
     is_Transcription = False
-    print("クリックされました")
     
 
 def draw_window():
@@ -19,20 +21,37 @@ def draw_window():
     root.geometry("480x560")
 
     #テキストボックス（複数行、スクロールバー付）の生成
-    textfield = st.ScrolledText(root, width = 64, height=32)
-    textfield.configure(state='normal')
-    textfield.pack()
+    labal1 = tk.Label(text="議事録")
+    labal1.pack()
 
-    realtime = st.ScrolledText(root, width = 64, height=5)
+    textfield = st.ScrolledText(root, height=15)
+    textfield.configure(state='normal')
+    textfield.pack(fill="both", expand=True)
+
+    #リアルタイムボックス
+    labal2 = tk.Label(text="リアルタイム編集")
+    labal2.pack()
+
+    realtime = st.ScrolledText(root, height=5)
     realtime.configure(state='normal')
-    realtime.pack()
+    realtime.pack(fill="both", expand=True)
+
+    #要約
+    labal3 = tk.Label(root, text="要約")
+    labal3.pack()
+
+    summary = st.ScrolledText(root, height=5)
+    summary.configure(state='normal')
+    summary.pack(fill="both", expand=True)
 
     canvas = tk.Canvas(root, width=480, height=160, bg="white")
     canvas.pack()
 
     ###図形###
-    img = Image.open("test.png")
-    tkimg = ImageTk.PhotoImage(img)
-    canvas.create_image(64, 64, image=tkimg, tags="img")
-    canvas.tag_bind("img", "<ButtonPress-1>", pressed)
+    endbutton = Image.open("stop.png")
+    tkimg = ImageTk.PhotoImage(endbutton)
+    canvas.create_image(64, 64, image=tkimg, tags="endbutton")
+    canvas.tag_bind("endbutton", "<ButtonPress-1>", EndButtonPressed)
+
+
     root.mainloop()
