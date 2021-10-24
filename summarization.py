@@ -16,6 +16,10 @@ from sumy.nlp.tokenizers import Tokenizer
 from sumy.utils import get_stop_words
 from ginza import *
 
+import sys
+sys.path.append('../')
+import UI
+
 
 # アルゴリズム
 from sumy.summarizers.lex_rank import LexRankSummarizer
@@ -94,6 +98,8 @@ def main(text):
   language = "japanese"
   sum_sentences = summarize_sentences(text, algorithm=algorithm, language=language)
   print(sum_sentences.replace('。', '。\n'))
+  #UIUX.summary.insert(sum_sentences.replace('。', '。\n'))
+  
 
 if __name__ == "__main__":
   args = sys.argv
