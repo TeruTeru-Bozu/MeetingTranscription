@@ -27,6 +27,7 @@ from six.moves import queue
 import threading
 sys.path.append('../')
 import UI
+import summarization
 
 # Audio recording parameters
 RATE = 16000
@@ -115,6 +116,8 @@ def listen_print_loop(responses):
     """
     num_chars_printed = 0
     now_line = 1
+
+    all_sentence = ""
     for response in responses:
         if not response.results:
             continue
@@ -146,8 +149,11 @@ def listen_print_loop(responses):
 
         else:
             ##決まった文字列の表示##
+            UI.realtime.delete('1.0', 'end')
             print(transcript + overwrite_chars)
             UI.textfield.insert('' + str(now_line) + '.0', transcript + overwrite_chars + '\n')
+            all_sentence += transcript + overwrite_chars + '。'
+
 
             now_line += 1
 
@@ -159,8 +165,22 @@ def listen_print_loop(responses):
 
             num_chars_printed = 0
 
+        #終了ボタンが押されたら、やめる
+        if(UI.is_Transcription is False):
+            if(UI.realtime.get('1.0', 'end') != ""):
+                UI.textfield.insert('' + str(now_line) + '.0', transcript + overwrite_chars + '\n')
+                all_sentence += transcript + overwrite_chars + '。'
+                now_line += 1
+
+            print("要約をします")
+            summarization.main(all_sentence)
+            print("要約がようやく終わったよ")
+            UI.is_Transcription = True
+            break
+    return all_sentence
 
 def main():
+    all_sentence = ""
     # See http://g.co/cloud/speech/docs/languages
     # for a list of supported languages.
     language_code = "ja-JP"  # a BCP-47 language tag
@@ -186,13 +206,17 @@ def main():
         responses = client.streaming_recognize(streaming_config, requests)
 
         # Now, put the transcription responses to use.
-        listen_print_loop(responses)
+        all_sentence = listen_print_loop(responses)
+
 
 
 if __name__ == "__main__":
 
     thread1 = threading.Thread(target=UI.draw_window)
     thread1.start()
+
+    UI.is_Transcription = True
+    print(UI.is_Transcription)
 
     main()
 # [END speech_transcribe_streaming_mic]
