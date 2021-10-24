@@ -20,6 +20,11 @@ from ginza import *
 # アルゴリズム
 from sumy.summarizers.lex_rank import LexRankSummarizer
 from sumy.summarizers.text_rank import TextRankSummarizer
+from sumy.summarizers.lsa import LsaSummarizer
+from sumy.summarizers.kl import KLSummarizer
+from sumy.summarizers.luhn import LuhnSummarizer
+from sumy.summarizers.reduction import ReductionSummarizer
+from sumy.summarizers.sum_basic import SumBasicSummarizer
 
 
 class JapaneseCorpus:
@@ -60,7 +65,9 @@ class JapaneseCorpus:
         return corpus
     
 
-algorithm_dic = {"lex": LexRankSummarizer(), "tex": TextRankSummarizer()}
+algorithm_dic = {"lex": LexRankSummarizer(), "tex": TextRankSummarizer(), "lsa": LsaSummarizer(),\
+                  "kl": KLSummarizer(), "luhn": LuhnSummarizer(), "redu": ReductionSummarizer(),\
+                  "sum": SumBasicSummarizer()}
 
 def summarize_sentences(sentences, sentences_count=10, algorithm="lex", language="japanese"):
   corpus_maker = JapaneseCorpus()
@@ -75,14 +82,15 @@ def summarize_sentences(sentences, sentences_count=10, algorithm="lex", language
     print("algorithm name:'{}'is not found.".format(algorithm))
 
   summarizer.stop_words = get_stop_words(language)
-  sentences_count = int(len(corpus)/10*3)
+  sentences_count = int((len(corpus)+9)/10*3)
   summary = summarizer(document=parser.document, sentences_count=sentences_count)
 
   return "".join([str(preprocessed_sentences_list[corpus.index(sentence.__str__())]) for sentence in summary])
 
 
 def main(text):
-  algorithm = "tex"
+  #text = """要約のテスト用の文章はここに入れる"""
+  algorithm = "sum"
   language = "japanese"
   sum_sentences = summarize_sentences(text, algorithm=algorithm, language=language)
   print(sum_sentences.replace('。', '。\n'))
