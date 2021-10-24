@@ -25,14 +25,25 @@ import pyaudio
 from six.moves import queue
 
 import threading
+
+from savefile import savefile
 sys.path.append('../')
 import UI
 import summarization
+import savefile
+
+import atexit
 
 # Audio recording parameters
 RATE = 16000
 CHUNK = int(RATE / 10)  # 100ms
 
+def SaveResult():
+    all_text = UI.textfield.get('1.0', 'end')
+    all_summary = UI.summary.get('1.0', 'end')
+    savefile.savefile(all_text)
+    savefile.savefile(all_summary)
+    print("終了します")
 
 class MicrophoneStream(object):
     """Opens a recording stream as a generator yielding the audio chunks."""
@@ -114,6 +125,7 @@ def listen_print_loop(responses):
     the next result to overwrite it, until the response is a final one. For the
     final one, print a newline to preserve the finalized transcription.
     """
+    atexit.register(SaveResult)
     num_chars_printed = 0
     now_line = 1
 
@@ -147,10 +159,6 @@ def listen_print_loop(responses):
             sys.stdout.flush()
             num_chars_printed = len(transcript)
 
-            #終了ボタンが押されたら、やめる
-            if(UI.is_Transcription is False):
-                return
-
         else:
             ##決まった文字列の表示##
             UI.realtime.delete('1.0', 'end')
@@ -164,11 +172,6 @@ def listen_print_loop(responses):
 
             now_line += 1
 
-            #終了ボタンが押されたら、やめる
-            if(UI.is_Transcription is False):
-                return
-
-
             # Exit recognition if any of the transcribed phrases could be
             # one of our keywords.
             if re.search(r"\b(exit|quit)\b", transcript, re.I):
@@ -176,9 +179,6 @@ def listen_print_loop(responses):
                 return
 
             num_chars_printed = 0
-            #終了ボタンが押されたら、やめる
-            if(UI.is_Transcription is False):
-                return
     
 def main():
     # See http://g.co/cloud/speech/docs/languages
@@ -207,7 +207,6 @@ def main():
 
         # Now, put the transcription responses to use.
         listen_print_loop(responses)
-        print("終了")
 
 if __name__ == "__main__":
 
@@ -215,8 +214,9 @@ if __name__ == "__main__":
     thread1.start()
 
     UI.is_Transcription = True
-    print(UI.is_Transcription)
+    
 
     main()
+    sys.exit(main())
 # [END speech_transcribe_streaming_mic]
 
